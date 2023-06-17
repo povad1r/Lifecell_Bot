@@ -11,7 +11,6 @@ from create_bot import dp, bot, db
 
 from keyboards import start_kb
 from keyboards.start_kb import new_captcha_kb_func
-from states import choose_tariff
 
 from captcha.image import ImageCaptcha
 
@@ -114,16 +113,6 @@ async def captcha_create(message):
     return captcha_text, captcha_msg
 
 
-async def tariff_order(call: CallbackQuery):
-    try:
-        await bot.delete_message(chat_id=call,
-                                 message_id=call.message.message_id)
-    except:
-        pass
-    await choose_tariff.ChooseTariff.price_input.set()
-
-
-@dp.callback_query_handler(text='🗑 Закрити', state='*')
 async def close(call: CallbackQuery):
     await call.answer(text='Меню приховано!')
 
@@ -137,7 +126,6 @@ async def close(call: CallbackQuery):
 def register_handlers_commands(dp: Dispatcher):
     dp.register_message_handler(start, Command('start'))
     dp.register_message_handler(captcha_input, state=Captcha.captcha_input)
-    dp.register_callback_query_handler(new_captcha, lambda c: c.data and c.data.startswith('new_captcha:'),
+    dp.register_callback_query_handler(new_captcha, text='new_captcha:',
                                        state=Captcha.captcha_input)
     dp.register_callback_query_handler(close, text='close:', state='*')
-    dp.register_callback_query_handler(tariff_order, text='choose_order:', state='*')

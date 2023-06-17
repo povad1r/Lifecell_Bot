@@ -1,9 +1,10 @@
 from aiogram import executor
 
 from create_bot import dp, db
-from handlers import commands
+from handlers import commands, tariff
 
 commands.register_handlers_commands(dp)
+tariff.register_handlers_tariff(dp)
 
 
 async def on_startup(_):
