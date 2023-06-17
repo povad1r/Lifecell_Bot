@@ -19,6 +19,7 @@ from states.choose_tariff import Captcha
 
 # КОМАНДА /START
 async def start(message: Message, state: FSMContext):
+    await state.finish()
     if message.chat.id == message.from_user.id:
 
         user_id = message.from_user.id
