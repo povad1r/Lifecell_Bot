@@ -23,10 +23,12 @@ async def scrape_tariffs_func(price, internet, time, connect_type, loyalty_input
                 data = await response.json()
                 text = ''
                 if data:
+                    text += f"<b>📱 Доступні тарифи по заданим параметрам:</b>\n\n"
                     for item in data:
-                        text += f"📱|Доступні тарифи по вашим параметрам:\n {item['name']}:\n{item['shop_link_url']}\n\n"
+                        text += f" • 🏮 <a href='{item['shop_link_url']}'><b>{item['name']}</b></a>\n"
+                    text += f'\n<b>Введіть /start щоб почати знову.</b>'
                 else:
-                    return 'По заданним параметрам тарифів немає!'
+                    return '<b>📭 • По заданним параметрам, тарифів не знайдено!\nВведіть /start щоб почати знову.</b>'
                 return text
             except (json.JSONDecodeError, aiohttp.ContentTypeError):
                 print('Ошибка при разборе JSON-ответа')

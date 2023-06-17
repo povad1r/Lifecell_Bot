@@ -85,7 +85,8 @@ async def input_tariff_loyalty(call: CallbackQuery, state: FSMContext):
                                             connect_type=data['tariff_connect_type'],
                                             loyalty_input=data['tariff_loyalty'])
         await bot.send_message(chat_id=call.message.chat.id,
-                               text=f'{tariffs}')
+                               text=f'{tariffs}',
+                               parse_mode='HTML')
         try:
             await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
         except:
