@@ -1,12 +1,6 @@
-import os
+TOKEN = '6204831220:AAHyoUG9ozK1JGlPVDgMd5MqV_FpxJ7POrk'
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
-TOKEN = os.getenv('TOKEN')
-
-IP = os.getenv('ip')
-PGUSER = os.getenv('PGUSER')
-PGPASSWORD = os.getenv('PGPASSWORD')
-DATABASE = os.getenv('DATABASE')
+IP = 'localhost'
+PGUSER = 'postgres'
+PGPASSWORD = '7'
+DATABASE = 'database'

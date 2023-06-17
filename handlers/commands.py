@@ -64,10 +64,10 @@ async def captcha_input(message: Message, state: FSMContext):
                 pass
 
             await db.sql_create_user(user_id=message.from_user.id,
-                                     datetime=datetime.now())
+                                     datetime=str(datetime.now()))
 
-            await message.answer(text='*Вы успішно верифікувалися!',
-                                 parse_mode='Markdown')
+            await message.answer(text='<b>Вы успішно верифікувалися!</b>',
+                                 parse_mode='HTML')
 
             photo = open('static/lifecell.gif', 'rb')
             await bot.send_animation(chat_id=message.chat.id,
@@ -105,9 +105,9 @@ async def captcha_create(message):
 
     captcha_msg = await bot.send_photo(chat_id=message.chat.id,
                                        photo=captcha_photo,
-                                       caption='*Пожалуйста пройдите капчу.\n✍ Укажите цифры с картинки:*',
+                                       caption='<b>Будь ласка, пройдіть капчу.\n✍ Вкажіть цифри з картинки:</b>',
                                        reply_markup=await new_captcha_kb_func(),
-                                       parse_mode='Markdown')
+                                       parse_mode='HTML')
 
     os.remove(f'captcha/{message.from_user.id}.png')
 
@@ -120,26 +120,24 @@ async def tariff_order(call: CallbackQuery):
                                  message_id=call.message.message_id)
     except:
         pass
-    choose_tariff.ChooseTariff.price_input.set()
+    await choose_tariff.ChooseTariff.price_input.set()
 
 
 @dp.callback_query_handler(text='🗑 Закрити', state='*')
 async def close(call: CallbackQuery):
+    await call.answer(text='Меню приховано!')
+
     try:
-        await bot.delete_message(chat_id=call,
+        await bot.delete_message(chat_id=call.message.chat.id,
                                  message_id=call.message.message_id)
     except:
         pass
 
-    await call.answer(text='Меню приховано!')
-
 
 def register_handlers_commands(dp: Dispatcher):
-    dp.register_inline_handler(start, Command('start'))
-    dp.register_inline_handler(captcha_input, state=Captcha.captcha_input)
-    dp.register_message_handler(new_captcha, lambda c: c.data and c.data.startswith('new_captcha:'),
-                                state=Captcha.captcha_input)
-    dp.register_inline_handler(close, text='🗑 Закрити', state='*')
-    dp.register_inline_handler(tariff_order, text='🔍 Обрати Тариф', state='*')
-
-
+    dp.register_message_handler(start, Command('start'))
+    dp.register_message_handler(captcha_input, state=Captcha.captcha_input)
+    dp.register_callback_query_handler(new_captcha, lambda c: c.data and c.data.startswith('new_captcha:'),
+                                       state=Captcha.captcha_input)
+    dp.register_callback_query_handler(close, text='close:', state='*')
+    dp.register_callback_query_handler(tariff_order, text='choose_order:', state='*')
