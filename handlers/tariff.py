@@ -13,7 +13,6 @@ from states import choose_tariff
 
 async def back(call: CallbackQuery, state: FSMContext):
     if await choose_tariff.ChooseTariff.previous():
-        await choose_tariff.ChooseTariff.previous()
         await tariff_callback_messages(call=call, current_state=await state.get_state())
     else:
         await state.finish()
@@ -23,7 +22,7 @@ async def back(call: CallbackQuery, state: FSMContext):
         except:
             pass
 
-        photo = photo = open('static/lifecell.gif', 'rb')
+        photo = open('static/lifecell.gif', 'rb')
         await bot.send_animation(chat_id=call.message.chat.id,
                                  animation=photo,
                                  caption=f'<b>👋 Привіт!\n➖➖➖➖➖➖➖➖➖➖➖\n'
@@ -47,7 +46,7 @@ async def input_tariff_price(call: CallbackQuery, state: FSMContext):
     button, price = call.data.split(':')
     async with state.proxy() as data:
         data['tariff_price'] = price
-    choose_tariff.ChooseTariff.internet_input.set()
+    await choose_tariff.ChooseTariff.internet_input.set()
     await tariff_callback_messages(call=call, current_state=await state.get_state())
 
 
@@ -55,7 +54,7 @@ async def input_tariff_internet(call: CallbackQuery, state: FSMContext):
     button, internet = call.data.split(':')
     async with state.proxy() as data:
         data['tariff_internet'] = internet
-    choose_tariff.ChooseTariff.time_input.set()
+    await choose_tariff.ChooseTariff.time_input.set()
     await tariff_callback_messages(call=call, current_state=await state.get_state())
 
 
@@ -63,7 +62,7 @@ async def input_tariff_time(call: CallbackQuery, state: FSMContext):
     button, time = call.data.split(':')
     async with state.proxy() as data:
         data['tariff_time'] = time
-    choose_tariff.ChooseTariff.connect_type_input.set()
+    await choose_tariff.ChooseTariff.connect_type_input.set()
     await tariff_callback_messages(call=call, current_state=await state.get_state())
 
 
@@ -71,7 +70,7 @@ async def input_tariff_connect_type(call: CallbackQuery, state: FSMContext):
     button, connect_type = call.data.split(':')
     async with state.proxy() as data:
         data['tariff_connect_type'] = connect_type
-    choose_tariff.ChooseTariff.loyalty_input.set()
+    await choose_tariff.ChooseTariff.loyalty_input.set()
     await tariff_callback_messages(call=call, current_state=await state.get_state())
 
 
@@ -96,32 +95,33 @@ async def input_tariff_loyalty(call: CallbackQuery, state: FSMContext):
 
 async def tariff_callback_messages(call, current_state):
     if current_state == f'ChooseTariff:price_input':
-        await call.message.edit_text(text=f'<b>💸 Оберіть бажану ціну тарифу:</b>',
-                                     reply_markup=await tariff_price_kb_func(),
-                                     parse_mode='HTML')
+        await call.message.edit_caption(caption=f'<b>💸 Оберіть бажану ціну тарифу:</b>',
+                                        reply_markup=await tariff_price_kb_func(),
+                                        parse_mode='HTML')
     elif current_state == f'ChooseTariff:internet_input':
-        await call.message.edit_text(text=f'<b>📊 Оберіть бажаний інтернет ліміт:</b>',
+        await call.message.edit_caption(caption=f'<b>📊 Оберіть бажаний інтернет ліміт:</b>',
                                      reply_markup=await internet_input_kb_func(),
                                      parse_mode='HTML')
     elif current_state == f'ChooseTariff:time_input':
-        await call.message.edit_text(text=f'<b>🕔 Оберіть бажаний ліміт по часу:</b>',
+        await call.message.edit_caption(caption=f'<b>🕔 Оберіть бажаний ліміт по часу:</b>',
                                      reply_markup=await time_input_kb_func(),
                                      parse_mode='HTML')
     elif current_state == f'ChooseTariff:connect_type_input':
-        await call.message.edit_text(text=f'<b>📲 Оберіть бажаний тип підключення:</b>',
+        await call.message.edit_caption(caption=f'<b>📲 Оберіть бажаний тип підключення:</b>',
                                      reply_markup=await connect_type_input_kb_func(),
                                      parse_mode='HTML')
     elif current_state == f'ChooseTariff:loyalty_input':
-        await call.message.edit_text(text=f'<b>🚦 Оберіть бажану лояльність:</b>',
+        await call.message.edit_caption(caption=f'<b>🚦 Оберіть бажану лояльність:</b>',
                                      reply_markup=await loyalty_input_kb_func(),
                                      parse_mode='HTML')
 
 
 def register_handlers_tariff(dp: Dispatcher):
+    dp.register_callback_query_handler(back, text='back:', state='*')
     dp.register_callback_query_handler(tariff_order, text='choose_order:', state='*')
     dp.register_callback_query_handler(input_tariff_price, state=choose_tariff.ChooseTariff.price_input)
     dp.register_callback_query_handler(input_tariff_internet, state=choose_tariff.ChooseTariff.internet_input)
     dp.register_callback_query_handler(input_tariff_time, state=choose_tariff.ChooseTariff.time_input)
     dp.register_callback_query_handler(input_tariff_connect_type, state=choose_tariff.ChooseTariff.connect_type_input)
     dp.register_callback_query_handler(input_tariff_loyalty, state=choose_tariff.ChooseTariff.loyalty_input)
-    dp.register_callback_query_handler(back, text='back:', state='*')
+
