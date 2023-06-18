@@ -112,7 +112,7 @@ async def tariff_callback_messages(call, current_state):
                                      reply_markup=await connect_type_input_kb_func(),
                                      parse_mode='HTML')
     elif current_state == f'ChooseTariff:loyalty_input':
-        await call.message.edit_caption(caption=f'<b>🚦 Оберіть бажану лояльність:</b>',
+        await call.message.edit_caption(caption=f'<b>🚦 Оберіть Вашу лояльність:</b>',
                                      reply_markup=await loyalty_input_kb_func(),
                                      parse_mode='HTML')
 
